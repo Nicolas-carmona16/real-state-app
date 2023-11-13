@@ -17,7 +17,7 @@ import {
   signOutUserStart,
 } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 
 export default function Profile() {
   const fileRef = useRef(null);
@@ -27,6 +27,8 @@ export default function Profile() {
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [showListingsError, setShowListingsError] = useState(false);
+  const [userListings, setUserListings] = useState([]);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -107,7 +109,7 @@ export default function Profile() {
   const handleSignOut = async () => {
     try {
       dispatch(signOutUserStart());
-      const res = await fetch('/api/auth/signout');
+      const res = await fetch("/api/auth/signout");
       const data = await res.json();
       if (data.success === false) {
         dispatch(deleteUserFailure(data.message));
@@ -116,6 +118,22 @@ export default function Profile() {
       dispatch(deleteUserSuccess(data));
     } catch (error) {
       dispatch(deleteUserFailure(data.message));
+    }
+  };
+
+  const handleShowListings = async () => {
+    try {
+      setShowListingsError(false);
+      const res = await fetch(`/api/user/listings/${currentUser._id}`);
+      const data = await res.json();
+      if (data.success === false) {
+        setShowListingsError(true);
+        return;
+      }
+
+      setUserListings(data);
+    } catch (error) {
+      setShowListingsError(true);
     }
   };
 
@@ -180,7 +198,10 @@ export default function Profile() {
         >
           {loading ? "Loading..." : "Update"}
         </button>
-        <Link className="bg-blue-800 text-white p-3 rounded-lg uppercase text-center hover:opacity-95" to='/create-listing'>
+        <Link
+          className="bg-blue-800 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
+          to="/create-listing"
+        >
           Create Listing
         </Link>
       </form>
@@ -191,12 +212,50 @@ export default function Profile() {
         >
           Delete account
         </span>
-        <span onClick={handleSignOut} className="text-red-600 cursor-pointer">Sign out</span>
+        <span onClick={handleSignOut} className="text-red-600 cursor-pointer">
+          Sign out
+        </span>
       </div>
       <p className="text-red-600 mt-5 text-center">{error ? error : ""}</p>
       <p className="text-green-600 mt-5 text-center">
         {updateSuccess ? "User is updated successfully" : ""}
       </p>
+      <button onClick={handleShowListings} className="text-green-600 w-full">
+        Show Listings
+      </button>
+      <p className="text-red-600 mt-5 text-center">
+        {showListingsError ? "Error showing listings" : ""}
+      </p>
+
+      {userListings && userListings.length > 0 && (
+        <div className="flex flex-col gap-4">
+          <h1 className="text-center mt-7 text-2xl font-semibold text-blue-800">Your Listings</h1>
+          {userListings.map((listing) => (
+          <div
+            key={listing._id}
+            className="border rounded-lg p-3 flex justify-between items-center gap-4"
+          >
+            <Link to={`/listing/${listing._id}`}>
+              <img
+                src={listing.imageUrls[0]}
+                alt="listing cover"
+                className="h-20 w-20 object-contain"
+              />
+            </Link>
+            <Link
+              className="text-slate-800 font-semibold flex-1 hover:underline truncate"
+              to={`/listing/${listing._id}`}
+            >
+              <p>{listing.name}</p>
+            </Link>
+            <div className="flex flex-col items-center">
+              <button className="text-red-600 uppercase">Delete</button>
+              <button className="text-green-600 uppercase">Edit</button>
+            </div>
+          </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
