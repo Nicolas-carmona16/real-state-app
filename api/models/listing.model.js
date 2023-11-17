@@ -30,6 +30,14 @@ const listingSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    stratum: {
+      type: Number,
+      required: true,
+    },
+    meters: {
+      type: Number,
+      required: true,
+    },
     furnished: {
       type: Boolean,
       required: true,

@@ -49,6 +49,12 @@ export default function ListingItem({ listing }) {
                 ? `${listing.bathrooms} baths `
                 : `${listing.bathrooms} bath `}
             </div>
+            <div className="font-bold text-xs">
+              {listing.stratum && `Stratum ${listing.stratum} `}
+            </div>
+            <div className="font-bold text-xs">
+              {listing.meters && `${listing.meters} sqm `}
+            </div>
           </div>
         </div>
       </Link>

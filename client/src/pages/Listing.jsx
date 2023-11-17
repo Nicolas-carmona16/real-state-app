@@ -9,10 +9,10 @@ import {
   FaBath,
   FaBed,
   FaChair,
-  FaMapMarkedAlt,
   FaMapMarkerAlt,
   FaParking,
   FaShare,
+  FaSquare,
 } from "react-icons/fa";
 import Contact from "../components/Contact";
 
@@ -134,6 +134,13 @@ export default function Listing() {
               <li className="flex items-center gap-1 whitespace-nowrap ">
                 <FaChair className="text-lg" />
                 {listing.furnished ? "Furnished" : "Unfurnished"}
+              </li>
+              <li className="flex items-center gap-1 whitespace-nowrap ">
+                Stratum: {listing.stratum}
+              </li>
+              <li className="flex items-center gap-1 whitespace-nowrap ">
+                <FaSquare className="text-lg"/>
+                Meters: {listing.meters}
               </li>
             </ul>
             <div>
