@@ -33,7 +33,10 @@ export default function Header() {
             <span className="text-blue-800">App</span>
           </h1>
         </Link>
-        <form onSubmit={handleSubmit} className="bg-slate-200 p-3 rounded-lg flex items-center">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-slate-200 p-3 rounded-lg flex items-center"
+        >
           <input
             type="text"
             placeholder="Search..."
@@ -55,6 +58,15 @@ export default function Header() {
             <li className="hidden sm:inline text-blue-900 hover:underline">
               About
             </li>
+          </Link>
+          <Link to="/create-listing">
+            {currentUser ? (
+              <li className="hidden sm:inline text-blue-900 hover:underline">
+                Create Listing
+              </li>
+            ) : (
+              <></>
+            )}
           </Link>
           <Link to="/profile">
             {currentUser ? (
