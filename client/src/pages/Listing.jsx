@@ -136,6 +136,21 @@ export default function Listing() {
                 {listing.furnished ? "Furnished" : "Unfurnished"}
               </li>
             </ul>
+            <div>
+              <Swiper navigation>
+                {listing.imageUrls.map((url) => (
+                  <SwiperSlide key={url}>
+                    <div
+                      className="h-[550px]"
+                      style={{
+                        background: `url(${url}) center no-repeat`,
+                        backgroundSize: "cover",
+                      }}
+                    ></div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
             {currentUser && listing.userRef !== currentUser._id && !contact && (
               <button
                 onClick={() => setContact(true)}
