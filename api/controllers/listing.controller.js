@@ -90,6 +90,12 @@ export const getListings = async (req, res, next) => {
       type = { $in: ["sale", "rent"] };
     }
 
+    const meters = req.query.meters;
+    const metersFilter = meters ? { meters: parseFloat(meters) } : {};
+
+    const stratum = req.query.stratum;
+    const stratumFilter = stratum ? { stratum: parseInt(stratum) } : {};
+
     const searchTerm = req.query.searchTerm || "";
 
     const sort = req.query.sort || "createdAt";
@@ -102,6 +108,8 @@ export const getListings = async (req, res, next) => {
       furnished,
       parking,
       type,
+      ...metersFilter,
+      ...stratumFilter,
     })
       .sort({ [sort]: order })
       .limit(limit)

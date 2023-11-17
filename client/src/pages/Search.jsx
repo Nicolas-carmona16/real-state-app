@@ -12,6 +12,8 @@ export default function Search() {
     offer: false,
     sort: "created_at",
     order: "desc",
+    stratum: "",
+    meters: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -27,6 +29,8 @@ export default function Search() {
     const offerFromUrl = urlParams.get("offer");
     const sortFromUrl = urlParams.get("sort");
     const orderFromUrl = urlParams.get("order");
+    const metersFromUrl = urlParams.get("meters") || "";
+    const stratumFromUrl = urlParams.get("stratum") || "";
 
     if (
       searchTermFromUrl ||
@@ -35,7 +39,9 @@ export default function Search() {
       furnishedFromUrl ||
       offerFromUrl ||
       sortFromUrl ||
-      orderFromUrl
+      orderFromUrl ||
+      metersFromUrl ||
+      stratumFromUrl
     ) {
       setSidebardata({
         searchTerm: searchTermFromUrl || "",
@@ -45,6 +51,8 @@ export default function Search() {
         offer: offerFromUrl === "true" ? true : false,
         sort: sortFromUrl || "created_at",
         order: orderFromUrl || "desc",
+        meters: metersFromUrl || "",
+        stratum: stratumFromUrl || "",
       });
     }
 
@@ -98,6 +106,10 @@ export default function Search() {
 
       setSidebardata({ ...sidebardata, sort, order });
     }
+
+    if (e.target.id === "meters" || e.target.id === "stratum") {
+      setSidebardata({ ...sidebardata, [e.target.id]: e.target.value });
+    }
   };
 
   const handleSubmit = (e) => {
@@ -110,6 +122,8 @@ export default function Search() {
     urlParams.set("offer", sidebardata.offer);
     urlParams.set("sort", sidebardata.sort);
     urlParams.set("order", sidebardata.order);
+    urlParams.set("meters", sidebardata.meters);
+    urlParams.set("stratum", sidebardata.stratum);
     const searchQuery = urlParams.toString();
     navigate(`/search?${searchQuery}`);
   };
@@ -209,6 +223,32 @@ export default function Search() {
                 checked={sidebardata.furnished}
               />
               <span>Furnished</span>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-6">
+            <div className="flex items-center gap-2">
+              <label className="font-semibold">Stratum:</label>
+              <input
+                type="number"
+                id="stratum"
+                min="1"
+                max="6"
+                className="border rounded-lg p-3"
+                value={sidebardata.stratum}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="font-semibold">Meters:</label>
+              <input
+                type="number"
+                id="meters"
+                min="20"
+                max="5000"
+                className="border rounded-lg p-3"
+                value={sidebardata.meters}
+                onChange={handleChange}
+              />
             </div>
           </div>
           <div className="flex items-center gap-2">
