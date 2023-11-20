@@ -66,30 +66,19 @@ export const getListings = async (req, res, next) => {
   try {
     const limit = parseInt(req.query.limit) || 9;
     const startIndex = parseInt(req.query.startIndex) || 0;
-    let offer = req.query.offer;
 
-    if (offer === undefined || offer === "false") {
-      offer = { $in: [false, true] };
-    }
+    // Boolean filters
+    const offer = req.query.offer !== undefined ? req.query.offer === "true" : { $in: [false, true] };
+    const furnished = req.query.furnished !== undefined ? req.query.furnished === "true" : { $in: [false, true] };
+    const parking = req.query.parking !== undefined ? req.query.parking === "true" : { $in: [false, true] };
 
-    let furnished = req.query.furnished;
-
-    if (furnished === undefined || furnished === "false") {
-      furnished = { $in: [false, true] };
-    }
-
-    let parking = req.query.parking;
-
-    if (parking === undefined || parking === "false") {
-      parking = { $in: [false, true] };
-    }
-
+    // Type filter
     let type = req.query.type;
-
     if (type === undefined || type === "all") {
       type = { $in: ["sale", "rent"] };
     }
 
+    //Numeric filter
     const meters = req.query.meters;
     const metersFilter = meters ? { meters: parseFloat(meters) } : {};
 

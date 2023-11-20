@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ListingItem from "../components/ListingItem";
+import { useSelector } from "react-redux";
 
 export default function Search() {
+  const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [sidebardata, setSidebardata] = useState({
     searchTerm: "",
@@ -17,6 +19,7 @@ export default function Search() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const [listings, setListings] = useState([]);
   const [showMore, setShowMore] = useState(false);
 
@@ -112,20 +115,43 @@ export default function Search() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const urlParams = new URLSearchParams();
-    urlParams.set("searchTerm", sidebardata.searchTerm);
-    urlParams.set("type", sidebardata.type);
-    urlParams.set("parking", sidebardata.parking);
-    urlParams.set("furnished", sidebardata.furnished);
-    urlParams.set("offer", sidebardata.offer);
-    urlParams.set("sort", sidebardata.sort);
-    urlParams.set("order", sidebardata.order);
-    urlParams.set("meters", sidebardata.meters);
-    urlParams.set("stratum", sidebardata.stratum);
-    const searchQuery = urlParams.toString();
-    navigate(`/search?${searchQuery}`);
+    try {
+      setLoading(true);
+      setError(false);
+      const res = await fetch("/api/search/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...sidebardata,
+          userRef: currentUser._id,
+        }),
+      });
+      const data = await res.json();
+      setLoading(false);
+      if (data.success === false) {
+        setError(data.message);
+      } else {
+        const urlParams = new URLSearchParams();
+        urlParams.set("searchTerm", sidebardata.searchTerm);
+        urlParams.set("type", sidebardata.type);
+        urlParams.set("parking", sidebardata.parking);
+        urlParams.set("furnished", sidebardata.furnished);
+        urlParams.set("offer", sidebardata.offer);
+        urlParams.set("sort", sidebardata.sort);
+        urlParams.set("order", sidebardata.order);
+        urlParams.set("meters", sidebardata.meters);
+        urlParams.set("stratum", sidebardata.stratum);
+        const searchQuery = urlParams.toString();
+        navigate(`/search?${searchQuery}`);
+      }
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
   };
 
   const onShowMoreClick = async () => {

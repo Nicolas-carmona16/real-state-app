@@ -22,11 +22,13 @@ export default function UpdateListing() {
     type: "rent",
     bedrooms: 1,
     bathrooms: 1,
-    regularPrice: 20000,
+    regularPrice: 500,
     discountPrice: 0,
     offer: false,
     parking: false,
     furnished: false,
+    stratum: 1,
+    meters: 20,
   });
   const [imageUploadError, setImageUploadError] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -263,6 +265,32 @@ export default function UpdateListing() {
             </div>
           </div>
           <div className="flex flex-wrap gap-6">
+          <div className="flex items-center gap-2">
+              <input
+                type="number"
+                id="stratum"
+                min="1"
+                max="6"
+                required
+                className="p-3 border border-slate-300 rounded-lg"
+                onChange={handleChange}
+                value={formData.stratum}
+              />
+              <p>Stratum</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                id="meters"
+                min="20"
+                max="5000"
+                required
+                className="p-3 border border-slate-300 rounded-lg"
+                onChange={handleChange}
+                value={formData.meters}
+              />
+              <p>Meters</p>
+            </div>
             <div className="flex items-center gap-2">
               <input
                 type="number"
@@ -293,7 +321,7 @@ export default function UpdateListing() {
               <input
                 type="number"
                 id="regularPrice"
-                min="20000"
+                min="500"
                 max="5000000000"
                 required
                 className="p-3 border border-slate-300 rounded-lg"

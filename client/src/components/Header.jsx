@@ -59,6 +59,15 @@ export default function Header() {
               About
             </li>
           </Link>
+          <Link to="/recommendation">
+            {currentUser ? (
+              <li className="hidden sm:inline text-blue-900 hover:underline">
+                Recommendations
+              </li>
+            ) : (
+              <></>
+            )}
+          </Link>
           <Link to="/create-listing">
             {currentUser ? (
               <li className="hidden sm:inline text-blue-900 hover:underline">
