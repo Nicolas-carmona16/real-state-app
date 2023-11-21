@@ -15,6 +15,7 @@ import {
   FaSquare,
 } from "react-icons/fa";
 import Contact from "../components/Contact";
+import { Comment } from "../components/Comment";
 
 // https://sabe.io/blog/javascript-format-numbers-commas#:~:text=The%20best%20way%20to%20format,format%20the%20number%20with%20commas.
 
@@ -25,6 +26,7 @@ export default function Listing() {
   const [error, setError] = useState(false);
   const [copied, setCopied] = useState(false);
   const [contact, setContact] = useState(false);
+  const [comments, setComments] = useState([]);
   const params = useParams();
   const { currentUser } = useSelector((state) => state.user);
 
@@ -49,6 +51,50 @@ export default function Listing() {
     };
     fetchListing();
   }, [params.listingId]);
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await fetch(
+          `/api/comment/comments/${params.listingId}`
+        );
+        const data = await response.json();
+        setComments(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchComments();
+  }, [params.listingId]);
+
+  const handleCommentSubmit = (newComment) => {
+    setComments((prevComments) => [...prevComments, newComment]);
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const response = await fetch(`/api/comment/comments/${commentId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete comment. Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log(data);
+
+      // Filtra los comentarios para excluir el comentario eliminado
+      setComments((prevComments) =>
+        prevComments.filter((comment) => comment._id !== commentId)
+      );
+    } catch (error) {
+      console.error("Error deleting comment:", error.message);
+    }
+  };
 
   return (
     <main>
@@ -139,7 +185,7 @@ export default function Listing() {
                 Stratum: {listing.stratum}
               </li>
               <li className="flex items-center gap-1 whitespace-nowrap ">
-                <FaSquare className="text-lg"/>
+                <FaSquare className="text-lg" />
                 Meters: {listing.meters}
               </li>
             </ul>
@@ -167,6 +213,14 @@ export default function Listing() {
               </button>
             )}
             {contact && <Contact listing={listing} />}
+            <Comment
+              listingId={listing._id}
+              userId={currentUser?._id}
+              currentUser={currentUser}
+              onCommentSubmit={handleCommentSubmit}
+              comments={comments}
+              handleDeleteComment={handleDeleteComment}
+            />
           </div>
         </div>
       )}
