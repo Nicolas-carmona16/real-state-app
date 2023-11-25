@@ -7,6 +7,7 @@ import listingRouter from "./routes/listing.route.js";
 import searchRouter from "./routes/search.route.js";
 import commentRouter from "./routes/comment.route.js";
 import cookieParser from "cookie-parser";
+import path from "path";
 dotenv.config();
 
 const app = express();
@@ -20,6 +21,8 @@ mongoose
   .catch((err) => {
     console.error(`connection error: ${err}`);
   });
+
+const __dirname = path.resolve();
 
 // Middleware for JSON parsing and CORS
 app.use(express.json());
@@ -36,6 +39,12 @@ app.use("/api/auth", authRouter);
 app.use("/api/listing", listingRouter);
 app.use("/api/search", searchRouter);
 app.use("/api/comment", commentRouter);
+
+app.use(express.static(path.join(__dirname, "/client/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
+});
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
