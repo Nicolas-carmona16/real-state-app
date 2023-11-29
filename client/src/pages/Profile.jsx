@@ -223,6 +223,12 @@ export default function Profile() {
         >
           Create Listing
         </Link>
+        <Link
+          className="bg-blue-800 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
+          to="/recommendation"
+        >
+          Recommendations
+        </Link>
       </form>
       <div className="flex justify-between mt-5">
         <span
