@@ -8,6 +8,9 @@ import {
 import { app } from "../firebase";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { AddressAutofill } from "@mapbox/search-js-react"
+
+const AUTO_FILL_TOKEN = "pk.eyJ1Ijoibmljb2Nhcm1vbmExNiIsImEiOiJjbHBrY2dscW0wN2tmMnJwbTZqZDhmMnRvIn0.Vfl0c4uMdEiY-pw6DGLK_Q";
 
 export default function CreateListing() {
   const { currentUser } = useSelector((state) => state.user);
@@ -187,15 +190,18 @@ export default function CreateListing() {
             onChange={handleChange}
             value={formData.description}
           />
-          <input
-            type="text"
-            placeholder="Address"
-            className="border p-3 rounded-lg"
-            id="address"
-            required
-            onChange={handleChange}
-            value={formData.address}
-          />
+          <AddressAutofill accessToken={AUTO_FILL_TOKEN}>
+            <input
+              type="text"
+              placeholder="Address"
+              className="border p-3 rounded-lg"
+              id="address"
+              autoComplete="address-line1"
+              required
+              onChange={handleChange}
+              value={formData.address}
+            />
+          </AddressAutofill>
           <div className="flex gap-6 flex-wrap">
             <div className="flex gap-2">
               <input
