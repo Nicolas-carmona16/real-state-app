@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
 import { useSelector } from "react-redux";
@@ -30,6 +30,7 @@ export default function Listing() {
   const [comments, setComments] = useState([]);
   const params = useParams();
   const { currentUser } = useSelector((state) => state.user);
+  const [recommendedProperties, setRecommendedProperties] = useState([]);
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -66,6 +67,27 @@ export default function Listing() {
       }
     };
     fetchComments();
+  }, [params.listingId]);
+
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      try {
+        const response = await fetch(
+          `/api/listing/recommendations/${params.listingId}`
+        );
+        const data = await response.json();
+
+        if (data.success) {
+          setRecommendedProperties(data.nearbyProperties);
+        } else {
+          console.error("Failed to fetch recommendations:", data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching recommendations:", error.message);
+      }
+    };
+
+    fetchRecommendations();
   }, [params.listingId]);
 
   const handleCommentSubmit = (newComment) => {
@@ -228,6 +250,40 @@ export default function Listing() {
               comments={comments}
               handleDeleteComment={handleDeleteComment}
             />
+            {recommendedProperties.length > 0 && (
+              <div className="my-7">
+                <h2 className="text-2xl font-semibold mb-4">
+                  Recommended Listings Nearby
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {recommendedProperties.map((property) => (
+                    <div key={property._id} className="border p-4 rounded-lg">
+                      <Link to={`/listing/${property._id}`}>
+                        <p className="font-semibold text-lg mb-2">
+                          {property.name}
+                        </p>
+                        {property.imageUrls &&
+                          property.imageUrls.length > 0 && (
+                            <img
+                              src={property.imageUrls[0]} // Usa la primera imagen de la matriz
+                              alt={`Property: ${property.name}`}
+                              className="w-full h-40 object-cover mb-2 rounded-md"
+                            />
+                          )}
+                        <p className="text-gray-500 mb-2">{property.address}</p>
+                        <p className="text-blue-800 font-semibold">
+                          $
+                          {property.offer
+                            ? property.discountPrice
+                            : property.regularPrice.toLocaleString("en-US")}
+                          {property.type === "rent" && " / month"}
+                        </p>
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
