@@ -211,6 +211,7 @@ export default function UpdateListing() {
             required
             onChange={handleChange}
             value={formData.address}
+            readOnly
           />
           <div className="flex gap-6 flex-wrap">
             <div className="flex gap-2">

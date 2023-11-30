@@ -16,6 +16,7 @@ import {
 } from "react-icons/fa";
 import Contact from "../components/Contact";
 import { Comment } from "../components/Comment";
+import Map from "../components/Map";
 
 // https://sabe.io/blog/javascript-format-numbers-commas#:~:text=The%20best%20way%20to%20format,format%20the%20number%20with%20commas.
 
@@ -203,6 +204,12 @@ export default function Listing() {
                   </SwiperSlide>
                 ))}
               </Swiper>
+            </div>
+            <div>
+              <Map
+                lat={listing.coordinates.lat}
+                lon={listing.coordinates.lon}
+              />
             </div>
             {currentUser && listing.userRef !== currentUser._id && !contact && (
               <button
