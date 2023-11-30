@@ -62,6 +62,12 @@ const listingSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    coordinates: {
+      type: {
+        lat: Number,
+        lon: Number,
+      },
+    },
   },
   { timestamps: true }
 );

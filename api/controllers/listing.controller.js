@@ -1,10 +1,54 @@
 import Listing from "../models/listing.model.js";
 import { errorHandler } from "../utils/error.js";
+import { geocodeAddress } from "../utils/geocoding.js";
 
 export const createListing = async (req, res, next) => {
   try {
-    const listing = await Listing.create(req.body);
-    return res.status(201).json(listing);
+    const {
+      name,
+      description,
+      address,
+      regularPrice,
+      discountPrice,
+      bathrooms,
+      bedrooms,
+      stratum,
+      meters,
+      furnished,
+      parking,
+      type,
+      offer,
+      imageUrls,
+      userRef,
+    } = req.body;
+
+    // Geocodifica la dirección
+    const geocodedData = await geocodeAddress(address);
+
+    // Crea el nuevo listado con las coordenadas geocodificadas
+    const newListing = await Listing.create({
+      name,
+      description,
+      address,
+      regularPrice,
+      discountPrice,
+      bathrooms,
+      bedrooms,
+      stratum,
+      meters,
+      furnished,
+      parking,
+      type,
+      offer,
+      imageUrls,
+      userRef,
+      coordinates: {
+        lat: geocodedData.geometry.lat,
+        lon: geocodedData.geometry.lng,
+      },
+    });
+
+    return res.status(201).json(newListing);
   } catch (error) {
     next(error);
   }
@@ -68,9 +112,18 @@ export const getListings = async (req, res, next) => {
     const startIndex = parseInt(req.query.startIndex) || 0;
 
     // Boolean filters
-    const offer = req.query.offer !== undefined ? req.query.offer === "true" : { $in: [false, true] };
-    const furnished = req.query.furnished !== undefined ? req.query.furnished === "true" : { $in: [false, true] };
-    const parking = req.query.parking !== undefined ? req.query.parking === "true" : { $in: [false, true] };
+    const offer =
+      req.query.offer !== undefined
+        ? req.query.offer === "true"
+        : { $in: [false, true] };
+    const furnished =
+      req.query.furnished !== undefined
+        ? req.query.furnished === "true"
+        : { $in: [false, true] };
+    const parking =
+      req.query.parking !== undefined
+        ? req.query.parking === "true"
+        : { $in: [false, true] };
 
     // Type filter
     let type = req.query.type;
